@@ -19,7 +19,9 @@ db = DBConnection()
 
 def welcome_keyboard():
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
-    keyboard.add(*[types.KeyboardButton(name) for name in ['❓ Доступные каналы', '🔢 Интервал', '📑 Пост', '➡️ START', '| Рассылка в личку', 'Добавление в канал']])
+    keyboard.add(*[types.KeyboardButton(name) for name in
+                   ['❓ Доступные каналы', '🔢 Интервал', '📑 Пост', '➡️ START', '| Рассылка в личку',
+                    'Добавление в канал']])
     return keyboard
 
 
@@ -42,6 +44,14 @@ class post(StatesGroup):
 class time(StatesGroup):
     timeout = State()
 
+
+class spam(StatesGroup):
+    channel_link = State()
+
+
+
+class add(StatesGroup):
+    channel_link = State()
 
 @dp.message_handler(state=addition.id)
 async def input_report(m: types.Message, state: FSMContext):
@@ -73,6 +83,30 @@ async def input_report(m: types.Message, state: FSMContext):
     except:
         await bot.send_message(m.chat.id, f'❌ Введите число.')
     await state.finish()
+
+
+@dp.message_handler(state=spam.channel_link)
+async def input_report(m: types.Message, state: FSMContext):
+    link = m.text
+    link = link[13:]
+    await bot.send_message(m.chat.id, f'Принял ссылку.')
+    await user.spam_direct(link)
+    await state.finish()
+
+
+@dp.message_handler(state=add.channel_link)
+async def input_report(m: types.Message, state: FSMContext):
+    link = m.text
+    link = link[13:]
+    await bot.send_message(m.chat.id, f'Принял ссылку.')
+    await user.add_members(link)
+    await state.finish()
+
+
+
+
+
+
 
 
 @dp.message_handler(content_types='text', state="*")
@@ -114,16 +148,15 @@ async def echo_message(m: types.Message):
                        {'📜 Изменить текст': 'EDIT_TEXT'}.items()])
         await bot.send_message(m.chat.id, '🔼 Ваш пост выглядит вот так 🔼', reply_markup=keyboard)
     elif m.text == '| Рассылка в личку':
-        await bot.send_message(m.chat.id, 'Отправьте ссылку на группу в формате https://t.me/***', reply_markup=keyboard)
-        #g = input()
-        #print(g[13:])
-        await user.spam_direct()
-    elif m.text == 'Добавление в канал':
-        await bot.send_message(m.chat.id, 'Отправьте ссылку на группу в формате https://t.me/***', reply_markup=keyboard)
-        #g = input()
-        #print(g[13:])
-        await user.add_members()
+        await bot.send_message(m.chat.id, 'Отправьте ссылку на группу в формате https://t.me/***',
+                               reply_markup=keyboard)
 
+        await spam.first()
+
+    elif m.text == 'Добавление в канал':
+        await bot.send_message(m.chat.id, 'Отправьте ссылку на группу в формате https://t.me/***',
+                               reply_markup=keyboard)
+        await add.first()
 
 
 @dp.callback_query_handler(lambda c: c.data, state="*")
