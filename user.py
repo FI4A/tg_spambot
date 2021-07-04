@@ -23,17 +23,14 @@ async def spam_direct():
             await client.send_message(user, f'Продаю бота для рассылки')
             await asyncio.sleep(30)
             good += 1
-            print(good)
         except Exception as e:
             print(e)
             bad += 1
-            print(bad)
             continue
     print(good, bad)
 
 
 async def add_members():
-    print(await client.get_dialogs())
     chat = [i.user.id for i in await client.get_chat_members("chat_arts", limit=200)]
     g = await client.get_chat('dsfsf42123')
     g = g.id
