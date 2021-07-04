@@ -31,7 +31,6 @@ async def spam_direct():
 
 
 async def add_members():
-    print(await client.get_dialogs())
     chat = [i.user.id for i in await client.get_chat_members("chat_arts", limit=200)]
     g = await client.get_chat('dsfsf42123')
     g = g.id
