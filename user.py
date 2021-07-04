@@ -11,9 +11,9 @@ client = Client("user", config.API_ID, config.API_HASH)
 client.start()
 
 
-async def spam_direct():
+async def spam_direct(channel):
     already = [i.chat.id for i in await client.get_dialogs()]
-    chat = [i.user.id for i in await client.get_chat_members("nijerinka_RF", limit=200) if
+    chat = [i.user.id for i in await client.get_chat_members(channel, limit=200) if
             i.user.is_bot == False and i.user.id not in already]
     good = 0
     bad = 0
@@ -30,8 +30,8 @@ async def spam_direct():
     print(good, bad)
 
 
-async def add_members():
-    chat = [i.user.id for i in await client.get_chat_members("chat_arts", limit=200)]
+async def add_members(channel):
+    chat = [i.user.id for i in await client.get_chat_members(channel, limit=200)]
     g = await client.get_chat('dsfsf42123')
     g = g.id
     for i in chat:
